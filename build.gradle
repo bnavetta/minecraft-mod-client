@@ -6,6 +6,11 @@ allprojects {
 	repositories {
 		mavenCentral()
 	}
+	
+	project.ext {
+		springVersion = '3.1.2.RELEASE'
+		groovyVersion = '1.8.7'
+	}
 }
 
 task wrapper(type:Wrapper) {
