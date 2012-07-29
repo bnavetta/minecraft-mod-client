@@ -14,3 +14,7 @@ build/
 .DS_Store
 .Spotlight-V100
 .Trashes
+
+!gradle/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
