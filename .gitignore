@@ -1,0 +1,16 @@
+*.class
+*.jar
+*.zip
+*.war
+*.log
+
+build/
+.gradle/
+
+.project
+.classpath
+.settings/
+
+.DS_Store
+.Spotlight-V100
+.Trashes
