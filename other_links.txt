@@ -1,0 +1,19 @@
+http://eclipsesource.com/blogs/2009/08/15/building-your-equinox-based-appserver-part-1/
+http://grails.org/doc/latest/guide/spring.html#14.3 Runtime Spring with the Beans DSL
+http://blog.cloudfoundry.com/2012/06/07/cloudfuji-accelerates-delivery-of-its-open-source-application-store-with-cloud-foundry/
+http://cloudfuji.com/?
+http://blog.cloudfoundry.org/2012/06/18/deploying-tomcat-7-using-the-standalone-framework/
+https://github.com/cloudfoundry/vcap-java-client/blob/master/cloudfoundry-client-lib/src/test/java/org/cloudfoundry/client/lib/CloudFoundryClientTest.java
+
+http://www.mailgun.com/
+http://lxc.sourceforge.net/
+http://www.javaworld.com/javaworld/jw-05-2001/jw-0511-legacy.html
+
+http://stackoverflow.com/questions/65820/unit-testing-c-code
+http://code.google.com/p/googletest/
+http://onlamp.com/pub/a/onlamp/2006/01/19/libtap.html
+http://cmockery.googlecode.com/svn/trunk/doc/index.html
+http://check.sourceforge.net/doc/check_html/check_3.html#SEC4
+http://check.sourceforge.net/doc/check_html/check_2.html#SEC3
+http://www.jera.com/techinfo/jtns/jtn002.html
+

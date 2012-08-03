@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 
 public class Application
 {
@@ -24,6 +25,8 @@ public class Application
 	private ViewController viewController;
 	
 	private JFrame frame;
+	
+	private JPanel container; //JFrames only hold one widget
 	
 	private String startPresenter;
 	
@@ -82,9 +85,25 @@ public class Application
 		System.setProperty("apple.laf.useScreenMenuBar", "true"); //So Macs use the Menu Bar of Destiny (I forgot what it's actually called)
 		frame = frameProvider.createFrame();
 		frame.setJMenuBar(menuProvider.createMenu());
-		viewController.setContainer(frame);
+		container = new JPanel();
+		frame.add(container);
+		viewController.setContainer(container);
 		viewController.goTo(startPresenter, startState);
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	public void stop()
+	{
+		Presenter current = viewController.getCurrentPresenter();
+		if(current != null)
+		{
+			current.stop();
+		}
+		if(frame != null)
+		{
+			frame.setVisible(false);
+			frame.dispose();
+		}
 	}
 }

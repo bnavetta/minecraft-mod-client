@@ -69,6 +69,8 @@ class MenuBuilder extends BuilderSupport
 	
 	private JMenuItem buildItem(name, Map attributes, value)
 	{
+		assert attributes
+		
 		String text = value?.toString()
 		if(!text || text.equals('null'))
 		{
@@ -85,7 +87,7 @@ class MenuBuilder extends BuilderSupport
 		{
 			item.setAccelerator(accelerator)
 		}
-		char mnemonic = attributes['mnemonic']
+		def mnemonic = attributes['mnemonic']
 		if(mnemonic != null && mnemonic != 0)
 		{
 			item.setMnemonic(mnemonic);

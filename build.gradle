@@ -7,11 +7,17 @@ allprojects {
 		mavenCentral()
 	}
 	
+	dependencies {
+		testCompile "junit:junit:4.10"
+	}
+	
 	project.ext {
 		springVersion = '3.1.2.RELEASE'
 		groovyVersion = '1.8.7'
 	}
 }
+
+apply from: 'git.gradle'
 
 task wrapper(type:Wrapper) {
 	gradleVersion = '1.0-rc-3'

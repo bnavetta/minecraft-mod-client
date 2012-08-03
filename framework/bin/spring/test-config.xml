@@ -3,8 +3,42 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean class="org.roguepanda.mod.client.framework.ViewController">
-		
+	<!--  <bean id="viewController" class="org.roguepanda.mod.client.framework.ViewController">
+		<property name="presenters">
+			<list>
+				<bean id="testStartPresenter" class="org.roguepanda.mod.client.framework.TestStartPresenter">
+					<property name="view" ref="testStartView"/>
+				</bean>
+			</list>
+		</property>
 	</bean>
+	
+	<bean id="testStartView" class="org.roguepanda.mod.client.framework.TestStartViewImpl"/>
+	
+	<bean id="application" class="org.roguepanda.mod.client.framework.Application">
+		<property name="frameProvider">
+			<bean class="org.roguepanda.mod.client.framework.TestFrameProvider"/>
+		</property>
+		<property name="menuProvider">
+			<bean class="org.roguepanda.mod.client.framework.TestMenuProvider"/>
+		</property>
+		<property name="viewController" ref="viewController"/>
+		<property name="startPresenter" value="testStartPresenter"/>
+		<property name="startState">
+			<map>
+				<entry key="message" value="Hello, World!"/>
+			</map>
+		</property>
+	</bean> -->
+	
+	<bean class="org.roguepanda.mod.client.framework.TestConfig"/>
+	
+	<bean id="testFrameProvider" class="org.roguepanda.mod.client.framework.TestFrameProvider"/>
+	
+	<bean id="testMenuProvider" class="org.roguepanda.mod.client.framework.TestMenuProvider"/>
+	
+	<bean id="testStartPresenter" class="org.roguepanda.mod.client.framework.TestStartPresenter"/>
+	
+	<bean id="testStartView" class="org.roguepanda.mod.client.framework.TestStartViewImpl"/>
 	
 </beans>

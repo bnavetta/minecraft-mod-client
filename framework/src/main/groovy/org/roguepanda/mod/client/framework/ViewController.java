@@ -1,14 +1,13 @@
 package org.roguepanda.mod.client.framework;
 
 import java.awt.Container;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-
-public class ViewController implements BeanPostProcessor
+public class ViewController
 {
-	private Map<String, Presenter> presenters;
+	private Map<String, Presenter> presenters = new HashMap<String, Presenter>();
 	
 	private Presenter currentPresenter;
 	
@@ -28,35 +27,53 @@ public class ViewController implements BeanPostProcessor
 		}
 		else
 		{
-			if(currentPresenter.canStop())
+			if(currentPresenter != null)
 			{
-				currentPresenter.stop();
-				pres.start(container, state);
-				return true;
+				if(currentPresenter.canStop())
+				{
+					currentPresenter.stop();
+					currentPresenter.getView().close();
+					View view = pres.getView();
+					view.initialize(container);
+					pres.start(state);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			else
 			{
-				return false;
+				pres.getView().initialize(container);
+				pres.start(state);
+				return true;
 			}
 		}
 	}
 	
+	public Map<String, Presenter> getPresenters() {
+		return presenters;
+	}
+
+	public void setPresenters(Map<String, Presenter> presenters) {
+		this.presenters = presenters;
+	}
+
+	public Presenter getCurrentPresenter() {
+		return currentPresenter;
+	}
+
 	public void setContainer(Container container)
 	{
 		this.container = container;
 	}
 
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException
+	public void setPresenters(List<Presenter> presenters)
 	{
-		return bean;
-	}
-
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException
-	{
-		if(bean instanceof Presenter)
+		for(Presenter p : presenters)
 		{
-			register((Presenter) bean);
+			register(p);
 		}
-		return bean;
 	}
 }

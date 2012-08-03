@@ -1,0 +1,59 @@
+import org.eclipse.jgit.api.*
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.lib.TextProgressMonitor
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	
+	dependencies {
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.0.0.201206130900-r'
+	}
+}
+
+apply plugin: GitPlugin
+
+class GitPlugin implements Plugin<Project>
+{
+	void apply(Project project)
+	{
+		def monitor = new TextProgressMonitor(new OutputStreamWriter(System.out));
+		
+		def repo = new FileRepositoryBuilder().setGitDir(project.file('.git')).readEnvironment().build()
+		println repo
+		project.extensions.create('git', GitPluginExtension)
+		project.git.git = new Git(repo)
+		
+		project.task('push') << {
+			def pushCmd = project.git.git.push()
+			pushCmd.progressMonitor = monitor
+			pushCmd.remote = project.git.remote
+		}
+		
+		project.task('status') << {
+			def status = project.git.git.status().call()
+			println "Added:"
+			status.added.each{ println "\t$it" }
+			println "Changed:"
+			status.changed.each{ println "\t$it" }
+			println "Conflicting:"
+			status.conflicting.each{ println "\t$it" }
+			println "Missing:"
+			status.missing.each{ println "\t$it" }
+			println "Modified:"
+			status.modified.each{ println "\t$it" }
+			println "Removed:"
+			status.removed.each{ println "\t$it" }
+			println "Untracked:"
+			status.untracked.each{ println "\t$it" }
+			println "Clean: ${status.isClean()}"
+		}
+	}
+}
+
+class GitPluginExtension
+{
+	String remote
+	Git git
+}

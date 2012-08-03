@@ -1,4 +1,7 @@
 dependencies {
-	compile "org.springframework:spring-context:$springVersion"
 	compile "org.codehaus.groovy:groovy:$groovyVersion"
+	compile "org.springframework:spring-context:$springVersion"
+	compile "cglib:cglib-nodep:2.2.2"
+	
+	testCompile "org.springframework:spring-test:$springVersion"
 }

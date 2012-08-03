@@ -1,0 +1,4 @@
+dependencies {
+	compile 'org.apache.httpcomponents:httpclient:4.2.1'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.0.5'
+}
