@@ -1,0 +1,145 @@
+import org.eclipse.jgit.api.*
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.lib.TextProgressMonitor
+import org.eclipse.jgit.transport.*
+import com.jcraft.jsch.*
+import javax.swing.*
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	
+	dependencies {
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.0.0.201206130900-r'
+	}
+}
+
+apply plugin: GitPlugin
+
+class GitPlugin implements Plugin<Project>
+{
+	String prompt(String msg)
+	{
+		def console = System.console()
+		if(console)
+		{
+			return console.readLine(msg)
+		}
+		else
+		{
+			logger.error('No console available')
+		}
+	}
+	
+	String promptSecure(String msg)
+	{
+		def console = System.console()
+		if(console)
+		{
+			return console.readPassword(msg)
+		}
+		else
+		{
+			logger.error('No console available')
+		}
+	}
+	
+	void apply(Project project)
+	{
+		//SshSessionFactory.instance = new SshAgentJschSessionFactory()
+		JSch.logger = new JSchLogger(project.logger)
+		def monitor = new TextProgressMonitor(new OutputStreamWriter(System.out));
+		
+		def repo = new FileRepositoryBuilder().setGitDir(project.file('.git')).readEnvironment().build()
+		project.extensions.create('git', GitPluginExtension)
+		project.git.git = new Git(repo)
+		
+		project.task('push') << {
+			def pushCmd = project.git.git.push()
+			pushCmd.progressMonitor = monitor
+			if(project.git.remote) pushCmd.remote = project.git.remote
+			//pushCmd.credentialsProvider = new UsernamePasswordCredentialsProvider(project.git.username ?: prompt('Username: '), project.git.password ?: promptSecure('Password: '))
+			pushCmd.call()
+		}
+		
+		project.task('status') << {
+			def status = project.git.git.status().call()
+			println "Added:"
+			status.added.each{ println "\t$it" }
+			println "Changed:"
+			status.changed.each{ println "\t$it" }
+			println "Conflicting:"
+			status.conflicting.each{ println "\t$it" }
+			println "Missing:"
+			status.missing.each{ println "\t$it" }
+			println "Modified:"
+			status.modified.each{ println "\t$it" }
+			println "Removed:"
+			status.removed.each{ println "\t$it" }
+			println "Untracked:"
+			status.untracked.each{ println "\t$it" }
+			println "Clean: ${status.isClean()}"
+		}
+	}
+}
+
+class GitPluginExtension
+{
+	String remote
+	Git git
+	String username
+	String password
+}
+
+class JSchLogger implements com.jcraft.jsch.Logger
+{
+	def logger
+	
+	public JSchLogger(def logger)
+	{
+		this.logger = logger
+	}
+	
+	public boolean isEnabled(int level) {
+				switch (level) {
+				case DEBUG:
+					return logger.isDebugEnabled();
+				case INFO:
+					return logger.isInfoEnabled();
+				case WARN:
+					return logger.isWarnEnabled();
+				case ERROR:
+					return logger.isErrorEnabled();
+				case FATAL:
+					return logger.isFatalEnabled();
+				}
+				return false;
+			}
+		
+	
+	public void log(int level, String message)
+	{
+		println "$level: $message"
+		switch(level)
+		{
+			case DEBUG:
+				logger.debug(message);
+				break
+			case INFO:
+				logger.info(message)
+				break
+			case WARN:
+				logger.warn(message)
+				break
+			case ERROR:
+				logger.error(message)
+				break
+			case FATAL:
+				println message
+				break
+			default:
+				println message
+		}
+	}
+}

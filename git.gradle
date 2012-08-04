@@ -1,59 +1,91 @@
-import org.eclipse.jgit.api.*
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.lib.TextProgressMonitor
-
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	
-	dependencies {
-		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.0.0.201206130900-r'
-	}
-}
-
 apply plugin: GitPlugin
 
 class GitPlugin implements Plugin<Project>
-{
+{	
 	void apply(Project project)
 	{
-		def monitor = new TextProgressMonitor(new OutputStreamWriter(System.out));
-		
-		def repo = new FileRepositoryBuilder().setGitDir(project.file('.git')).readEnvironment().build()
-		println repo
 		project.extensions.create('git', GitPluginExtension)
-		project.git.git = new Git(repo)
-		
-		project.task('push') << {
-			def pushCmd = project.git.git.push()
-			pushCmd.progressMonitor = monitor
-			pushCmd.remote = project.git.remote
-		}
-		
-		project.task('status') << {
-			def status = project.git.git.status().call()
-			println "Added:"
-			status.added.each{ println "\t$it" }
-			println "Changed:"
-			status.changed.each{ println "\t$it" }
-			println "Conflicting:"
-			status.conflicting.each{ println "\t$it" }
-			println "Missing:"
-			status.missing.each{ println "\t$it" }
-			println "Modified:"
-			status.modified.each{ println "\t$it" }
-			println "Removed:"
-			status.removed.each{ println "\t$it" }
-			println "Untracked:"
-			status.untracked.each{ println "\t$it" }
-			println "Clean: ${status.isClean()}"
-		}
+		project.tasks.add('status', StatusTask)
+		project.tasks.add('push', PushTask)
+		project.tasks.add('add', AddTask)
 	}
 }
 
 class GitPluginExtension
 {
 	String remote
-	Git git
+	String branch
+}
+
+abstract class BaseGitTask extends DefaultTask
+{
+	int execute(String cmd)
+	{
+		Process proc = cmd.execute()
+		proc.consumeProcessOutput(System.out, System.err);
+		Thread.startDaemon {
+			proc.getOut() << System.in
+		}
+		return proc.waitFor()
+	}
+}
+
+class StatusTask extends BaseGitTask
+{
+	@TaskAction
+	def status()
+	{
+		int retVal = execute('git status')
+		if(retVal != 0)
+		{
+			throw new GradleException("git status exited with nonzero status")
+		}
+	}
+}
+
+class PushTask extends BaseGitTask
+{
+	@TaskAction
+	def push()
+	{
+		def remote = project.git.remote ?: ''
+		def branch = project.git.branch ?: ''
+		if(execute("git push ${remote} ${branch}") != 0)
+			throw new GradleException('git push exited with nonzero status')
+	}
+}
+
+class AddTask extends BaseGitTask
+{
+	@TaskAction
+	def add()
+	{
+		if(System.getProperty('git.allfiles'))
+		{
+			if(execute('git add -A') != 0)
+				throw new GradleException('git add exited with nonzero status')
+		}
+		else
+		{
+			def files = []
+			if(System.getProperty('git.files')) //i.e. -Dgit.files='foo.txt:bar.txt' (or -Dgit.files=foo.txt;bar.txt on windows)
+			{
+				System.getProperty('git.files').split(File.pathSeparator).each {
+					files << project.file(it)
+				}
+			}
+			else
+			{
+				println 'Enter file names one at a time:'
+				Scanner scanner = new Scanner(System.in)
+				while(scanner.hasNextLine())
+				{
+					files << project.file(scanner.nextLine())
+				}
+			}
+			
+			if(execute("git add ${files.join(' ')}") != 0)
+				throw new GradleException('git add exited with nonzero status')
+		}
+	}
 }
