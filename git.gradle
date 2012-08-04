@@ -8,6 +8,7 @@ class GitPlugin implements Plugin<Project>
 		project.tasks.add('status', StatusTask)
 		project.tasks.add('push', PushTask)
 		project.tasks.add('add', AddTask)
+		project.tasks.add('commit', CommitTask)
 	}
 }
 
@@ -87,5 +88,40 @@ class AddTask extends BaseGitTask
 			if(execute("git add ${files.join(' ')}") != 0)
 				throw new GradleException('git add exited with nonzero status')
 		}
+	}
+}
+
+class CommitTask extends BaseGitTask
+{
+	int execute(String... cmd)
+	{
+		Process proc = new ProcessBuilder(cmd).start()
+		proc.consumeProcessOutput(System.out, System.err);
+		Thread.startDaemon {
+			proc.getOut() << System.in
+		}
+		return proc.waitFor()
+	}
+	
+	@TaskAction
+	def commit()
+	{
+		String message = System.getProperty('git.message')
+		if(!message)
+		{
+			def console = System.console()
+			if(console)
+			{
+				message = console.readLine("Commit Message:")
+			}
+			else
+			{
+				println "\nCommit Message: "
+				message = new Scanner(System.in).nextLine()
+			}
+		}
+		println "git commit -m \"$message\""
+		if(execute('git', 'commit', '-m', message) != 0)//quotes should work on windows and unix/mac
+			throw new GradleException('git commit exited with nonzero status')
 	}
 }
