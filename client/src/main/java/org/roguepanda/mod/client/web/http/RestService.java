@@ -9,11 +9,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RestService
 {
+	@SuppressWarnings("serial")
 	public static class HttpException extends Exception
 	{
 		private int status;
@@ -35,16 +38,16 @@ public class RestService
 		}
 	}
 	
-	private HttpClient client;
-	private ObjectMapper mapper;
+	private HttpClient client = new DefaultHttpClient();
+	private ObjectMapper mapper = new ObjectMapper();
 	
-	public <T> T getAsJsonObject(String url, Class<T> cls) throws IOException, HttpException
+	public <T> T getAsJsonObject(String url, JavaType type) throws IOException, HttpException
 	{
 		HttpGet get = new HttpGet(url);
 		HttpResponse response = client.execute(get);
 		if(response.getStatusLine().getStatusCode() > 399) //400+ are errors
 			throw new HttpException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-		return mapper.readValue(response.getEntity().getContent(), cls);
+		return mapper.readValue(response.getEntity().getContent(), type);
 	}
 	
 	public String getAsString(String url) throws IOException, HttpException

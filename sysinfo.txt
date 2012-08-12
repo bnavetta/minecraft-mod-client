@@ -1,0 +1,10 @@
+
+http://stackoverflow.com/questions/671876/whats-a-good-way-to-uniquely-identify-a-computer
+http://www.aumha.org/win5/a/wpa.php
+http://stackoverflow.com/questions/25552/using-java-to-get-os-level-system-information
+https://github.com/dblock/oshi
+http://support.hyperic.com/display/SIGAR/Home
+http://www.hyperic.com/support/docs/sigar/
+http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
+http://docs.oracle.com/javase/6/docs/api/java/lang/management/package-summary.html
+

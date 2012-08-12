@@ -1,0 +1,6 @@
+http://www.javamex.com/tutorials/cryptography/symmetric.shtml
+http://stackoverflow.com/questions/3188171/java-encryption-alternitive-to-hardcoded-key
+http://www.digizol.org/2009/10/java-encrypt-decrypt-jce-salt.html
+
+#Java Regex Callback
+http://stackoverflow.com/questions/375420/java-equivalent-to-phps-preg-replace-callback

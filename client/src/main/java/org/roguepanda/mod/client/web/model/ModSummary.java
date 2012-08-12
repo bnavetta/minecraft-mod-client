@@ -22,4 +22,9 @@ public class ModSummary
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public String toString()
+	{
+		return id + ": " + name;
+	}
 }

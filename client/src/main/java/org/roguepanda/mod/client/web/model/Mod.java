@@ -67,4 +67,26 @@ public class Mod
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
 	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(id);
+		sb.append(": ");
+		sb.append(name);
+		sb.append("\n\t");
+		sb.append(description);
+		sb.append("\nCreated: ");
+		sb.append(created);
+		sb.append("\nModified: ");
+		sb.append(lastModified);
+		sb.append("\n");
+		sb.append(home);
+		sb.append("\n by ");
+		sb.append(authorName);
+		sb.append(" (");
+		sb.append(authorId);
+		sb.append(")");
+		return sb.toString();
+	}
 }
